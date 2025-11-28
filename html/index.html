@@ -28,13 +28,35 @@
                     <span class="badge">2</span>
                 </a>
                 
-                <a href="../html/dangnhap.html" class="icon-btn" title="Đăng nhập">
-                    <i class="fa-regular fa-user"></i>
-                </a>
+                <!-- User info (hiển thị khi đã đăng nhập) -->
+                <div id="userInfoContainer" class="user-dropdown" style="display: none;">
+                    <div class="user-info" id="userInfo">
+                        <div class="user-avatar" id="userAvatar">U</div>
+                        <span class="user-name" id="userName">Người dùng</span>
+                        <i class="fa-solid fa-chevron-down" style="font-size: 12px; color: var(--text-gray);"></i>
+                    </div>
+                    <div class="user-menu" id="userMenu">
+                        <a href="#" class="user-menu-item">
+                            <i class="fa-solid fa-user"></i> Tài khoản
+                        </a>
+                        <a href="#" class="user-menu-item">
+                            <i class="fa-solid fa-box"></i> Đơn hàng
+                        </a>
+                        <a href="#" class="user-menu-item logout" id="logoutBtn">
+                            <i class="fa-solid fa-sign-out-alt"></i> Đăng xuất
+                        </a>
+                    </div>
+                </div>
 
-                <a href="../html/dangki.html" class="icon-btn" title="Đăng ký">
-                    <i class="fa-solid fa-user-plus"></i>
-                </a>
+                <!-- Login/Register buttons (hiển thị khi chưa đăng nhập) -->
+                <div id="authButtonsContainer">
+                    <a href="../html/dangnhap.html" class="icon-btn" title="Đăng nhập">
+                        <i class="fa-regular fa-user"></i>
+                    </a>
+                    <a href="../html/dangki.html" class="icon-btn" title="Đăng ký">
+                        <i class="fa-solid fa-user-plus"></i>
+                    </a>
+                </div>
             </div>
         </div>
     </header>
@@ -172,6 +194,8 @@
         <button id="backToTopBtn" class="btn-back-to-top"><i class="fa-solid fa-arrow-up"></i></button>
     </main>
 
+    <script src="../js/auth.js"></script>
+    <script src="../js/header-auth.js"></script>
     <script src="../js/main.js"></script>
 </body>
 </html>

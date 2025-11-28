@@ -27,6 +27,14 @@ if ($model->checkEmail($data["Email"])->rowCount() > 0) {
     exit;
 }
 
+// Kiểm tra số điện thoại nếu có
+if (isset($data["DienThoai"]) && !empty($data["DienThoai"])) {
+    if ($model->checkPhone($data["DienThoai"])->rowCount() > 0) {
+        echo json_encode(["status"=>false, "message"=>"Số điện thoại đã tồn tại"]);
+        exit;
+    }
+}
+
 // Gói data insert
 $dataInsert = [
     "HoTen"     => $data["HoTen"] ?? "",

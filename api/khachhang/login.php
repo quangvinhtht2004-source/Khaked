@@ -14,11 +14,15 @@ if (!$data || !isset($data["Email"]) || !isset($data["MatKhau"])) {
     exit;
 }
 
-$stmt = $model->login($data["Email"]);
+// Email có thể là email hoặc số điện thoại
+$emailOrPhone = $data["Email"];
+$stmt = $model->login($emailOrPhone);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($user && password_verify($data["MatKhau"], $user["MatKhau"])) {
+    // Không trả về mật khẩu
+    unset($user["MatKhau"]);
     echo json_encode(["status"=>true, "user"=>$user]);
 } else {
-    echo json_encode(["status"=>false, "message"=>"Sai email hoặc mật khẩu"]);
+    echo json_encode(["status"=>false, "message"=>"Sai email/số điện thoại hoặc mật khẩu"]);
 }

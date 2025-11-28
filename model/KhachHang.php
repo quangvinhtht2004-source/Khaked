@@ -15,6 +15,13 @@ class KhachHang {
         return $stmt;
     }
 
+    public function checkPhone($phone) {
+        $sql = "SELECT * FROM {$this->table} WHERE DienThoai=:DienThoai";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute(["DienThoai"=>$phone]);
+        return $stmt;
+    }
+
     public function register($data) {
         $sql = "INSERT INTO {$this->table}
                 (HoTen, Email, MatKhau, DienThoai, DiaChi)
@@ -24,10 +31,11 @@ class KhachHang {
         return $stmt->execute($data);
     }
 
-    public function login($email) {
-        $sql = "SELECT * FROM {$this->table} WHERE Email=:Email LIMIT 1";
+    public function login($emailOrPhone) {
+        // Hỗ trợ đăng nhập bằng email hoặc số điện thoại
+        $sql = "SELECT * FROM {$this->table} WHERE Email=:EmailOrPhone OR DienThoai=:EmailOrPhone LIMIT 1";
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute(["Email"=>$email]);
+        $stmt->execute(["EmailOrPhone"=>$emailOrPhone]);
         return $stmt;
     }
 }
