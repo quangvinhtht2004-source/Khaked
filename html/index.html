@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VKDBookStore | Trang Chủ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-wrapper">
+            <a href="../html/index.html" class="logo">VKD<span style="color:#EB7347">BookStore</span></a>
+
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Tìm sách bạn muốn... (Truyện, Kinh tế, Tâm lý...)">
+            </div>
+
+            <div class="header-actions">
+                <a href="#" class="icon-btn" title="Chatbot AI"><i class="fa-solid fa-robot"></i></a>
+                
+                <a href="../html/giohang.html" class="icon-btn" title="Giỏ hàng">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="badge">2</span>
+                </a>
+                
+                <a href="../html/dangnhap.html" class="icon-btn" title="Đăng nhập">
+                    <i class="fa-regular fa-user"></i>
+                </a>
+
+                <a href="../html/dangki.html" class="icon-btn" title="Đăng ký">
+                    <i class="fa-solid fa-user-plus"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <h2 class="section-title" style="margin-top:120px; text-align:center;">
+            🔥 Sách Hot
+        </h2>
+       
+        <section class="book-slider">
+            <div class="book-slide active" style="background-image: url('../img/demon\ ảnh\ nền.jpg');"> 
+                <div class="slide-content">
+                    <h2 class="slide-title">Thanh Gươm Diệt Quỷ – Tập 23</h2>
+                    <p class="slide-desc">
+                        Chương cuối đầy cảm xúc, hành trình của Tanjiro và Nezuko khép lại.
+                    </p>
+                    <div class="slide-price">Giá: 45.000đ</div>
+                </div>
+                <img src="../img/demon.webp" class="slide-book" alt="Demon Slayer Book">
+            </div>
+
+            <div class="book-slide" style="background-image: url('../img/tarot\ ảnh\ nền.webp');">
+                <div class="slide-content">
+                    <h2 class="slide-title">Dark Wood Tarot</h2>
+                    <p class="slide-desc">
+                        Bộ bài Tarot mang phong cách u tối, đầy huyền bí và tinh tế.
+                    </p>
+                    <div class="slide-price">Giá: 450.000đ</div>
+                </div>
+                <img src="../img/tarot.jpeg" class="slide-book" alt="Dark Wood Tarot">
+            </div>
+
+            <button class="book-btn prev"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="book-btn next"><i class="fa-solid fa-chevron-right"></i></button>
+        </section>
+
+        <section class="container">
+            <h2 class="section-title">Sách Nổi Bật</h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <span class="badge-sale">-20%</span>
+                    <a href="chitietsanpham.html">
+                        <img src="https://salt.tikicdn.com/cache/750x750/ts/product/38/54/87/e89f2b9465d9f2dcddcb5e7d068473ba.jpg" alt="Đắc Nhân Tâm" class="p-img">
+                        <h3 class="p-name">Đắc Nhân Tâm - Dale Carnegie</h3>
+                        <div><span class="p-price">79.000đ</span> <span class="p-old-price">99.000đ</span></div>
+                        <button class="btn-cart-outline"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</button>
+                    </a>
+                </div>
+                <div class="product-card">
+                    <span class="badge-sale">-15%</span>
+                    <img src="https://salt.tikicdn.com/cache/750x750/ts/product/62/3a/ea/9cb66f84175f6634d236304681140f64.jpg" alt="Tư Duy Nhanh Và Chậm" class="p-img">
+                    <h3 class="p-name">Tư Duy Nhanh Và Chậm - Daniel Kahneman</h3>
+                    <div><span class="p-price">149.000đ</span> <span class="p-old-price">179.000đ</span></div>
+                    <button class="btn-cart-outline"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</button>
+                </div>
+                 <div class="product-card">
+                    <img src="https://salt.tikicdn.com/cache/750x750/ts/product/8c/16/56/65a11c605c10b10d9534ff554f2e8a23.jpg" alt="Giết Con Chim Nhại" class="p-img">
+                    <h3 class="p-name">Giết Con Chim Nhại - Harper Lee</h3>
+                    <div><span class="p-price">99.000đ</span></div>
+                    <button class="btn-cart-outline"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</button>
+                </div>
+                <div class="product-card">
+                    <span class="badge-sale">Hot</span>
+                    <img src="https://salt.tikicdn.com/cache/750x750/ts/product/be/13/89/740249bca7ff6b690e54cf72d23b712c.jpg" alt="Thiên Tài Bên Trái Kẻ Điên Bên Phải" class="p-img">
+                    <h3 class="p-name">Thiên Tài Bên Trái, Kẻ Điên Bên Phải</h3>
+                    <div><span class="p-price">89.000đ</span></div>
+                    <button class="btn-cart-outline"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</button>
+                </div>
+            </div>
+        </section>
+
+        <button id="backToTopBtn" class="btn-back-to-top"><i class="fa-solid fa-arrow-up"></i></button>
+    </main>
+
+    <script src="../js/main.js"></script>
+</body>
+</html>

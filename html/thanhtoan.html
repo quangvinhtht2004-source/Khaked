@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh Toán | VKDBookStore</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-wrapper">
+            <a href="../html/index.html" class="logo">VKD<span style="color:#EB7347">BookStore</span></a>
+            <div class="header-actions">
+                <a href="../html/giohang.html" class="icon-btn" style="font-size: 16px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại giỏ hàng
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" style="padding-top: 100px; padding-bottom: 80px;">
+        <h2 class="section-title" style="margin-top: 0; margin-bottom: 30px; text-align: left;">
+            Thanh Toán
+        </h2>
+
+        <form action="#" class="checkout-container" id="checkout-form">
+            
+            <div class="checkout-form">
+                <h3 class="checkout-heading">Thông tin giao hàng</h3>
+                
+                <div class="form-group">
+                    <label class="form-label">Họ và tên</label>
+                    <input type="text" name="fullname" class="form-input" placeholder="Nhập họ tên người nhận..." required>
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label class="form-label">Số điện thoại</label>
+                        <input type="tel" name="phone" class="form-input" placeholder="Ví dụ: 0912..." required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-input" placeholder="Nhập email để nhận hóa đơn..." required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Địa chỉ nhận hàng</label>
+                    <input type="text" name="address" class="form-input" placeholder="Số nhà, tên đường, phường/xã..." required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tỉnh / Thành phố</label>
+                    <select name="city" class="form-input">
+                        <option value="">-- Chọn Tỉnh/Thành --</option>
+                        <option value="hcm">TP. Hồ Chí Minh</option>
+                        <option value="hn">Hà Nội</option>
+                        <option value="dn">Đà Nẵng</option>
+                        <option value="other">Khác</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Ghi chú (Tùy chọn)</label>
+                    <textarea name="note" class="form-input" rows="3" placeholder="Ví dụ: Giao hàng giờ hành chính..."></textarea>
+                </div>
+            </div>
+
+            <div class="checkout-summary-col">
+                <div class="summary-box">
+                    <h3 class="summary-title">Đơn hàng của bạn</h3>
+                    
+                    <div class="order-list" id="checkout-order-list">
+                        <p style="text-align: center; color: #999; font-size: 14px; padding: 10px;">
+                            Đang tải thông tin đơn hàng...
+                        </p>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="summary-row">
+                        <span>Tạm tính</span>
+                        <span id="checkout-subtotal">0đ</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Phí vận chuyển</span>
+                        <span id="checkout-shipping">0đ</span>
+                    </div>
+
+                    <div class="summary-total">
+                        <span>Tổng cộng</span>
+                        <span id="checkout-total" style="color: #EB7347;">0đ</span>
+                    </div>
+
+                    <h4 style="margin-top: 20px; margin-bottom: 10px;">Phương thức thanh toán</h4>
+                    <div class="payment-methods">
+                        <label class="method-item">
+                            <input type="radio" name="payment_method" value="cod" checked>
+                            <span class="radio-mark"></span>
+                            <span>Thanh toán khi nhận hàng (COD)</span>
+                        </label>
+                        
+                        <label class="method-item">
+                            <input type="radio" name="payment_method" value="banking">
+                            <span class="radio-mark"></span>
+                            <span>Chuyển khoản ngân hàng (QR)</span>
+                        </label>
+                        
+                        <label class="method-item">
+                            <input type="radio" name="payment_method" value="momo">
+                            <span class="radio-mark"></span>
+                            <span>Ví MoMo</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-checkout">ĐẶT HÀNG NGAY</button>
+                </div>
+            </div>
+
+        </form>
+    </main>
+
+</body>
+</html>

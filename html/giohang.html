@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ Hàng | VKDBookStore</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-wrapper">
+            <a href="../html/index.html" class="logo">VKD<span style="color:#EB7347">BookStore</span></a>
+            
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Tìm sách bạn muốn...">
+            </div>
+
+            <div class="header-actions">
+                <a href="../html/index.html" class="icon-btn" title="Trang chủ"><i class="fa-solid fa-house"></i></a>
+                <a href="#" class="icon-btn" style="color: #EB7347;"><i class="fa-solid fa-cart-shopping"></i><span class="badge">0</span></a>
+                <a href="../html/dangnhap.html" class="icon-btn"><i class="fa-regular fa-user"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" style="padding-top: 120px; padding-bottom: 80px;">
+        <h2 class="section-title" style="margin-top: 0; margin-bottom: 30px; text-align: left;">
+            Giỏ hàng của bạn
+        </h2>
+
+        <div class="cart-container">
+            
+            <div class="cart-list" id="cart-list-container">
+                
+                <div class="empty-cart-notify" style="text-align: center; padding: 40px; color: #777;">
+                    <i class="fa-solid fa-basket-shopping" style="font-size: 60px; color: #ddd; margin-bottom: 20px;"></i>
+                    <p style="font-size: 16px;">Giỏ hàng của bạn đang trống.</p>
+                    <a href="../html/index.html" style="color: #EB7347; font-weight: 700; margin-top: 10px; display: inline-block;">Quay lại mua sắm</a>
+                </div>
+
+            </div>
+
+            <div class="cart-summary">
+                <div class="summary-box">
+                    <h3 class="summary-title">Thanh Toán</h3>
+                    
+                    <div class="summary-row">
+                        <span>Tạm tính</span>
+                        <span id="sub-total">0đ</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Phí vận chuyển</span>
+                        <span>0đ</span>
+                    </div>
+                    <div class="summary-row" style="border-bottom: 1px dashed #ccc; padding-bottom: 15px;">
+                        <span>Giảm giá</span>
+                        <span>0đ</span>
+                    </div>
+
+                    <div class="summary-total">
+                        <span>Tổng cộng</span>
+                        <span id="final-total">0đ</span>
+                    </div>
+
+                   <a href="thanhtoan.html" class="btn-checkout" style="display:block; text-align:center; text-decoration:none;">
+    TIẾN HÀNH ĐẶT HÀNG
+</a>
+                    <a href="../html/index.html" class="btn-continue">Tiếp tục mua sắm</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/cart.js"></script>
+</body>
+</html>
