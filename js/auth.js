@@ -18,9 +18,14 @@ class AuthManager {
         localStorage.setItem(this.storageKey, JSON.stringify(userData));
     }
 
-    // Lấy thông tin user từ localStorage
+    // Lấy thông tin user từ localStorage hoặc sessionStorage
     getUser() {
-        const userData = localStorage.getItem(this.storageKey);
+        // Ưu tiên localStorage (ghi nhớ đăng nhập)
+        let userData = localStorage.getItem(this.storageKey);
+        if (!userData) {
+            // Nếu không có trong localStorage, thử sessionStorage
+            userData = sessionStorage.getItem(this.storageKey);
+        }
         return userData ? JSON.parse(userData) : null;
     }
 
@@ -32,6 +37,9 @@ class AuthManager {
     // Đăng xuất
     logout() {
         localStorage.removeItem(this.storageKey);
+        sessionStorage.removeItem(this.storageKey);
+        localStorage.removeItem('currentUser');
+        sessionStorage.removeItem('currentUser');
         window.location.href = '../html/index.html';
     }
 

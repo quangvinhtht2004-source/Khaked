@@ -6,7 +6,7 @@
     <title>Đăng Nhập | VKDBookStore</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../css/style.css"> 
+    <link rel="stylesheet" href="../css/style.css?v=2.0"> 
 </head>
 <body>
     <header class="header">
@@ -17,7 +17,7 @@
                     <i class="fa-solid fa-house"></i>
                 </a>
             </div>
-        </div>
+        </div>  
     </header>
 
     <main class="auth-wrapper">
@@ -31,14 +31,12 @@
                     <input type="text" id="emailOrPhone" class="form-input" placeholder="Nhập email hoặc số điện thoại..." required>
                 </div>
                 <div class="form-group" style="position: relative;">
-    <label class="form-label">Mật khẩu</label>
-    <input type="password" id="password" class="form-input" placeholder="Nhập mật khẩu..." required>
-
-    <span id="togglePassword" 
-          style="position:absolute; right:12px; top:45px; cursor:pointer; color:#888;">
-        <i class="fa-solid fa-eye"></i>
-    </span>
-</div>
+                    <label class="form-label">Mật khẩu</label>
+                    <input type="password" id="password" class="form-input" placeholder="Nhập mật khẩu..." required>
+                    <span id="togglePassword">
+                        <i class="fa-solid fa-eye"></i>
+                    </span>
+                </div>
                 <div class="auth-options">
                     <label class="remember-me">
                         <input type="checkbox" id="rememberMe"> Lưu đăng nhập
@@ -66,6 +64,7 @@
         </div>
     </main>
 
+    <script src="../js/config.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/login.js"></script>
 </body>

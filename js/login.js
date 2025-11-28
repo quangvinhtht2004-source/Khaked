@@ -1,119 +1,156 @@
 document.addEventListener("DOMContentLoaded", () => {
-
-    // Lấy form đăng nhập theo ID
     const form = document.getElementById("loginForm");
+    if (!form) return;
 
-    if (!form) return; // Nếu không tìm thấy form thì dừng lại
+    // Toggle password visibility
+    const togglePassword = document.getElementById("togglePassword");
+    const passwordInput = document.getElementById("password");
+    
+    if (togglePassword && passwordInput) {
+        // Sử dụng onclick trực tiếp để đảm bảo hoạt động
+        togglePassword.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const currentType = passwordInput.type || "password";
+            const newType = currentType === "password" ? "text" : "password";
+            passwordInput.type = newType;
+            
+            const icon = togglePassword.querySelector("i");
+            if (icon) {
+                if (newType === "password") {
+                    icon.classList.remove("fa-eye-slash");
+                    icon.classList.add("fa-eye");
+                } else {
+                    icon.classList.remove("fa-eye");
+                    icon.classList.add("fa-eye-slash");
+                }
+            }
+            return false;
+        };
+        
+        // Thêm style để đảm bảo có thể click
+        togglePassword.style.cursor = "pointer";
+        togglePassword.style.pointerEvents = "auto";
+    }
 
     form.addEventListener("submit", async (event) => {
-        event.preventDefault(); // Không reload trang
+        event.preventDefault();
 
-        // 1. LẤY DỮ LIỆU TỪ FORM
-        // Lưu ý: Kiểm tra kỹ id trong file HTML của bạn có đúng là 'emailOrPhone' và 'password' không
+        // Lấy dữ liệu từ form
         const emailOrPhone = document.getElementById("emailOrPhone").value.trim();
         const password = document.getElementById("password").value.trim();
-        
-        // Kiểm tra xem có checkbox 'Ghi nhớ đăng nhập' không (nếu có)
-        const rememberMe = document.getElementById("rememberMe")?.checked;
+        const rememberMe = document.getElementById("rememberMe")?.checked || false;
 
-        // 2. KIỂM TRA HỢP LỆ (VALIDATION)
+        // Validation
         if (!emailOrPhone || !password) {
-            showAlert("Vui lòng nhập Email/SĐT và Mật khẩu.", "error");
+            showAlert("Vui lòng nhập đầy đủ thông tin.", "error");
             return;
         }
 
-        // 3. URL API CHUẨN (Tuyệt đối để tránh lỗi 405)
-        const apiURL = "http://localhost/frontend/api/khachhang/login.php";
+        // Validate định dạng (email hoặc số điện thoại)
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const phoneRegex = /^[0-9]{10,11}$/;
+        
+        if (!emailRegex.test(emailOrPhone) && !phoneRegex.test(emailOrPhone)) {
+            showAlert("Vui lòng nhập đúng định dạng email hoặc số điện thoại.", "error");
+            return;
+        }
+
+        // Disable button khi đang xử lý
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Đang đăng nhập...";
+
+        // URL API - tự động detect môi trường
+        const apiURL = window.AppConfig 
+            ? window.AppConfig.getAPIURL('khachhang/login.php')
+            : "../api/khachhang/login.php";
 
         try {
-            // 4. GỌI API
             const response = await fetch(apiURL, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    Email: emailOrPhone, // Backend PHP đang chờ key là "Email"
-                    MatKhau: password    // Backend PHP đang chờ key là "MatKhau"
+                    Email: emailOrPhone,
+                    MatKhau: password
                 })
             });
 
-            // Nếu server trả về lỗi 404 hoặc 500
-            if (!response.ok) {
-                // Thử đọc lỗi chi tiết nếu có
-                const errorData = await response.json().catch(() => ({})); 
-                if (response.status === 405) {
-                    showAlert("Lỗi 405: Sai đường dẫn API hoặc sai phương thức.", "error");
-                } else {
-                    showAlert(errorData.message || "Lỗi kết nối server.", "error");
-                }
-                return;
-            }
-
             const data = await response.json();
 
-            // 5. XỬ LÝ KẾT QUẢ
             if (data.status === true) {
                 showAlert("Đăng nhập thành công! Đang chuyển hướng...", "success");
 
-                // Lưu thông tin User vào localStorage để các trang khác sử dụng
-                // Nếu chọn "Ghi nhớ" thì lưu lâu dài, không thì lưu theo phiên (Session)
+                // Lưu thông tin user - sử dụng authManager nếu có
+                const userData = {
+                    MaKH: data.user.MaKH,
+                    HoTen: data.user.HoTen,
+                    Email: data.user.Email,
+                    DienThoai: data.user.DienThoai,
+                    DiaChi: data.user.DiaChi || ""
+                };
+
                 if (rememberMe) {
-                    localStorage.setItem("currentUser", JSON.stringify(data.user));
+                    localStorage.setItem("vkdbookstore_user", JSON.stringify(userData));
+                    localStorage.setItem("currentUser", JSON.stringify(userData));
                 } else {
-                    sessionStorage.setItem("currentUser", JSON.stringify(data.user));
+                    sessionStorage.setItem("vkdbookstore_user", JSON.stringify(userData));
+                    sessionStorage.setItem("currentUser", JSON.stringify(userData));
                 }
 
-                // Điều hướng về trang chủ sau 1s
+                // Trigger custom event để header có thể cập nhật
+                window.dispatchEvent(new CustomEvent('userLoggedIn', { detail: userData }));
+
+                // Điều hướng về trang chủ
                 setTimeout(() => {
                     window.location.href = "../html/index.html";
                 }, 1000);
 
             } else {
-                // Sai tài khoản hoặc mật khẩu
-                showAlert(data.message || "Đăng nhập thất bại.", "error");
+                showAlert(data.message || "Email/SĐT hoặc mật khẩu không chính xác.", "error");
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
             }
 
         } catch (err) {
-            console.error(err);
-            showAlert("Không thể kết nối đến Server.", "error");
+            console.error("Lỗi:", err);
+            showAlert("Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.", "error");
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
         }
     });
-
 });
 
-
-// ===================== HIỂN THỊ THÔNG BÁO (GIỐNG FILE ĐĂNG KÝ) =======================
-
+// ===================== HIỂN THỊ THÔNG BÁO =======================
 function showAlert(message, type = "error") {
-    // Tìm phần tử hiển thị lỗi (thường là class .auth-desc hoặc tạo 1 div id="alertBox")
-    // Ở file đăng ký bạn dùng class .auth-desc, nên ở đây tôi giữ nguyên
-    let box = document.querySelector(".auth-desc");
-
-    // Nếu không tìm thấy class .auth-desc trong trang login, thử tìm id khác
-    if (!box) {
-        // Fallback: Tìm hoặc tạo 1 div tạm để hiện lỗi nếu HTML bên Login khác bên Register
-        box = document.getElementById("alert-message"); 
+    // Tìm hoặc tạo element thông báo
+    let alertBox = document.getElementById("alert-message");
+    
+    if (!alertBox) {
+        alertBox = document.createElement("div");
+        alertBox.id = "alert-message";
+        const form = document.querySelector(".auth-box form");
+        if (form) {
+            form.insertBefore(alertBox, form.firstChild);
+        } else {
+            const authBox = document.querySelector(".auth-box");
+            if (authBox) {
+                authBox.insertBefore(alertBox, authBox.firstChild);
+            }
+        }
     }
 
-    if (!box) return; // Nếu vẫn không có chỗ hiển thị thì thôi
+    // Reset styles
+    alertBox.className = `auth-message auth-message-${type}`;
+    alertBox.textContent = message;
+    alertBox.style.display = "block";
 
-    box.style.display = "block"; // Đảm bảo nó hiện lên
-    box.style.padding = "10px";
-    box.style.borderRadius = "6px";
-    box.style.marginBottom = "12px";
-    box.style.textAlign = "center";
-    box.style.fontWeight = "600";
-
-    if (type === "error") {
-        box.style.background = "#f8d7da";
-        box.style.color = "#842029";
-        box.style.border = "1px solid #f5c2c7";
-    } else {
-        box.style.background = "#d1e7dd";
-        box.style.color = "#0f5132";
-        box.style.border = "1px solid #badbcc";
-    }
-
-    box.innerText = message;
+    // Tự động ẩn sau 5 giây
+    setTimeout(() => {
+        alertBox.style.display = "none";
+    }, 5000);
 }

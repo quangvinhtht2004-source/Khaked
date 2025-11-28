@@ -66,9 +66,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Lắng nghe sự kiện storage để cập nhật khi đăng nhập/đăng xuất ở tab khác
     window.addEventListener('storage', function(e) {
-        if (e.key === 'vkdbookstore_user') {
+        if (e.key === 'vkdbookstore_user' || e.key === 'currentUser') {
             updateHeader();
         }
     });
+
+    // Lắng nghe custom event khi user đăng nhập
+    window.addEventListener('userLoggedIn', function(e) {
+        updateHeader();
+    });
+
+    // Kiểm tra lại sau khi DOM hoàn toàn load xong
+    setTimeout(updateHeader, 100);
 });
 

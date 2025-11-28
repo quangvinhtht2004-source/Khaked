@@ -749,6 +749,54 @@ img { max-width: 100%; display: block; }
     font-size: 14px;
 }
 
+/* Toggle password icon */
+.form-group[style*="position: relative"] .form-input,
+.form-group:has(span[id*="toggle"]) .form-input {
+    padding-right: 45px;
+}
+
+/* Toggle password button positioning - Căn giữa theo chiều dọc của input */
+#togglePassword,
+#togglePasswordRegister,
+#toggleConfirmPassword,
+.form-group[style*="position: relative"] span[id*="toggle"],
+.form-group:has(span[id*="toggle"]) span[id*="toggle"] {
+    position: absolute !important;
+    right: 12px !important;
+    bottom: 12px !important; /* Căn với padding-bottom của input (12px) */
+    cursor: pointer !important;
+    color: #888 !important;
+    z-index: 100 !important;
+    padding: 4px 6px !important;
+    transition: color 0.2s;
+    pointer-events: auto !important;
+    user-select: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    height: auto !important;
+    line-height: 1 !important;
+    background: transparent !important;
+}
+
+#togglePassword:hover,
+#togglePasswordRegister:hover,
+#toggleConfirmPassword:hover,
+.form-group[style*="position: relative"] span[id*="toggle"]:hover,
+.form-group:has(span[id*="toggle"]) span[id*="toggle"]:hover {
+    color: var(--gold-color) !important;
+}
+
+#togglePassword i,
+#togglePasswordRegister i,
+#toggleConfirmPassword i,
+.form-group[style*="position: relative"] span[id*="toggle"] i,
+.form-group:has(span[id*="toggle"]) span[id*="toggle"] i {
+    font-size: 16px !important;
+    pointer-events: none !important;
+}
+
 /* Nút chính (Đăng ký/Đăng nhập) */
 .btn-primary {
     width: 100%;
