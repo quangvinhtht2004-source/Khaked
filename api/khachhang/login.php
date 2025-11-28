@@ -1,8 +1,10 @@
 <?php
 // Ngăn cache
-header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Cache-Control: no-cache, no-store, must-revalidate, max-age=0");
 header("Pragma: no-cache");
 header("Expires: 0");
+header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+header("ETag: " . md5(time()));
 
 // Cho phép CORS và các method
 header("Access-Control-Allow-Origin: *");
@@ -36,6 +38,7 @@ try {
     $data = json_decode(file_get_contents("php://input"), true);
 
     if (!$data || !isset($data["Email"]) || !isset($data["MatKhau"])) {
+        http_response_code(400);
         echo json_encode(["status"=>false, "message"=>"Dữ liệu không hợp lệ"]);
         exit;
     }
@@ -48,12 +51,16 @@ try {
     if ($user && password_verify($data["MatKhau"], $user["MatKhau"])) {
         // Không trả về mật khẩu
         unset($user["MatKhau"]);
+        http_response_code(200);
         echo json_encode(["status"=>true, "user"=>$user]);
     } else {
+        http_response_code(401);
         echo json_encode(["status"=>false, "message"=>"Sai email/số điện thoại hoặc mật khẩu"]);
     }
 } catch (PDOException $e) {
+    http_response_code(500);
     echo json_encode(["status"=>false, "message"=>"Lỗi database: " . $e->getMessage()]);
 } catch (Exception $e) {
+    http_response_code(500);
     echo json_encode(["status"=>false, "message"=>"Lỗi: " . $e->getMessage()]);
 }
