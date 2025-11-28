@@ -39,41 +39,25 @@
         </div>
     </header>
 
+    <!-- Thanh nav thứ hai với danh mục -->
+    <nav class="category-nav">
+        <div class="container">
+            <ul class="category-list">
+                <li><a href="#" class="category-link active"><i class="fa-solid fa-fire"></i> Sách Hot</a></li>
+                <li><a href="#" class="category-link"><i class="fa-solid fa-book"></i> Kỹ năng sống</a></li>
+                <li><a href="#" class="category-link"><i class="fa-solid fa-brain"></i> Tâm lý học</a></li>
+                <li><a href="#" class="category-link"><i class="fa-solid fa-feather"></i> Văn học</a></li>
+                <li><a href="#" class="category-link"><i class="fa-solid fa-chart-line"></i> Kinh tế</a></li>
+                <li><a href="#" class="category-link"><i class="fa-solid fa-magic"></i> Truyện tranh</a></li>
+                <li><a href="#" class="category-link"><i class="fa-solid fa-graduation-cap"></i> Giáo dục</a></li>
+                <li><a href="#" class="category-link"><i class="fa-solid fa-tags"></i> Khuyến mãi</a></li>
+            </ul>
+        </div>
+    </nav>
+
     <main>
-        <h2 class="section-title" style="margin-top:120px; text-align:center;">
-            🔥 Sách Hot
-        </h2>
-       
-        <section class="book-slider">
-            <div class="book-slide active" style="background-image: url('../img/demon\ ảnh\ nền.jpg');"> 
-                <div class="slide-content">
-                    <h2 class="slide-title">Thanh Gươm Diệt Quỷ – Tập 23</h2>
-                    <p class="slide-desc">
-                        Chương cuối đầy cảm xúc, hành trình của Tanjiro và Nezuko khép lại.
-                    </p>
-                    <div class="slide-price">Giá: 45.000đ</div>
-                </div>
-                <img src="../img/demon.webp" class="slide-book" alt="Demon Slayer Book">
-            </div>
-
-            <div class="book-slide" style="background-image: url('../img/tarot\ ảnh\ nền.webp');">
-                <div class="slide-content">
-                    <h2 class="slide-title">Dark Wood Tarot</h2>
-                    <p class="slide-desc">
-                        Bộ bài Tarot mang phong cách u tối, đầy huyền bí và tinh tế.
-                    </p>
-                    <div class="slide-price">Giá: 450.000đ</div>
-                </div>
-                <img src="../img/tarot.jpeg" class="slide-book" alt="Dark Wood Tarot">
-            </div>
-
-            <button class="book-btn prev"><i class="fa-solid fa-chevron-left"></i></button>
-            <button class="book-btn next"><i class="fa-solid fa-chevron-right"></i></button>
-        </section>
-
+        <!-- Bộ lọc nâng cao -->
         <section class="container">
-            <h2 class="section-title">Sách Nổi Bật</h2>
-
             <div class="filter-panel" aria-label="Bộ lọc nâng cao">
                 <div class="filter-group">
                     <label for="filterSearch">Từ khóa</label>
@@ -111,6 +95,41 @@
                     <i class="fa-solid fa-rotate-right"></i> Xóa bộ lọc
                 </button>
             </div>
+        </section>
+
+        <h2 class="section-title" style="margin-top:40px; text-align:center;">
+            🔥 Sách Hot
+        </h2>
+       
+        <section class="book-slider">
+            <div class="book-slide active" style="background-image: url('../img/demon\ ảnh\ nền.jpg');"> 
+                <div class="slide-content">
+                    <h2 class="slide-title">Thanh Gươm Diệt Quỷ – Tập 23</h2>
+                    <p class="slide-desc">
+                        Chương cuối đầy cảm xúc, hành trình của Tanjiro và Nezuko khép lại.
+                    </p>
+                    <div class="slide-price">Giá: 45.000đ</div>
+                </div>
+                <img src="../img/demon.webp" class="slide-book" alt="Demon Slayer Book">
+            </div>
+
+            <div class="book-slide" style="background-image: url('../img/tarot\ ảnh\ nền.webp');">
+                <div class="slide-content">
+                    <h2 class="slide-title">Dark Wood Tarot</h2>
+                    <p class="slide-desc">
+                        Bộ bài Tarot mang phong cách u tối, đầy huyền bí và tinh tế.
+                    </p>
+                    <div class="slide-price">Giá: 450.000đ</div>
+                </div>
+                <img src="../img/tarot.jpeg" class="slide-book" alt="Dark Wood Tarot">
+            </div>
+
+            <button class="book-btn prev"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="book-btn next"><i class="fa-solid fa-chevron-right"></i></button>
+        </section>
+
+        <section class="container">
+            <h2 class="section-title">Sách Nổi Bật</h2>
 
             <div class="product-grid">
                 <div class="product-card" data-title="Đắc Nhân Tâm - Dale Carnegie" data-category="self-help" data-price="79000" data-sale="true">
