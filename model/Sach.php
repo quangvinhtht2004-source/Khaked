@@ -1,27 +1,29 @@
 <?php
-require_once __DIR__ . "/../config/config.php";
-
 class Sach {
-    private $conn;
 
-    public function __construct() {
-        $db = new Database();
-        $this->conn = $db->getConnection();
+    private $conn;
+    private $table = "Sach";
+
+    public function __construct($db) {
+        $this->conn = $db;
     }
 
     public function getAll() {
-        $sql = "SELECT * FROM Sach WHERE TrangThai = 1";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $this->conn->query("SELECT * FROM {$this->table} WHERE TrangThai=1");
     }
 
-    public function getByID($id) {
-        $sql = "SELECT * FROM Sach WHERE SachID = :id";
+    public function search($key) {
+        $sql = "SELECT * FROM {$this->table} 
+                WHERE TenSach LIKE :key OR TacGia LIKE :key";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(":id", $id);
-        $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->execute(["key" => "%$key%"]);
+        return $stmt;
+    }
+
+    public function getById($id) {
+        $sql = "SELECT * FROM {$this->table} WHERE SachID=:id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute(["id"=>$id]);
+        return $stmt;
     }
 }
-?>

@@ -1,20 +1,21 @@
-    <?php
-require_once __DIR__ . "/../config/config.php";
-
+<?php
 class GioHang {
-    private $conn;
 
-    public function __construct() {
-        $db = new Database();
-        $this->conn = $db->getgetConnection();
+    private $conn;
+    private $table = "GioHang";
+
+    public function __construct($db) {
+        $this->conn = $db;
     }
 
-    public function getCart($khachHangID) {
-        $sql = "SELECT * FROM GioHang WHERE KhachHangID = :id";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(":id", $khachHangID);
-        $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+    public function getByCustomer($KhachHangID) {
+        $stmt = $this->conn->prepare("SELECT * FROM GioHang WHERE KhachHangID=:id");
+        $stmt->execute(["id"=>$KhachHangID]);
+        return $stmt;
+    }
+
+    public function create($KhachHangID) {
+        $stmt = $this->conn->prepare("INSERT INTO GioHang(KhachHangID) VALUES(:id)");
+        return $stmt->execute(["id"=>$KhachHangID]);
     }
 }
-?>

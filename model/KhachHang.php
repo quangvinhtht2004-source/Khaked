@@ -1,33 +1,33 @@
 <?php
-require_once __DIR__ . "/../config/config.php";
-
 class KhachHang {
+
     private $conn;
+    private $table = "KhachHang";
 
-    public function __construct() {
-        $db = new Database();
-        $this->conn = $db->getConnection();
+    public function __construct($db) {
+        $this->conn = $db;
     }
 
-    public function dangKy($hoTen, $email, $password) {
-        $sql = "INSERT INTO KhachHang (HoTen, Email, MatKhau) VALUES (:hoTen, :email, :matkhau)";
+    public function checkEmail($email) {
+        $sql = "SELECT * FROM {$this->table} WHERE Email=:Email";
         $stmt = $this->conn->prepare($sql);
-
-        $hash = password_hash($password, PASSWORD_BCRYPT);
-
-        $stmt->bindParam(":hoTen", $hoTen);
-        $stmt->bindParam(":email", $email);
-        $stmt->bindParam(":matkhau", $hash);
-
-        return $stmt->execute();
+        $stmt->execute(["Email"=>$email]);
+        return $stmt;
     }
 
-    public function dangNhap($email) {
-        $sql = "SELECT * FROM KhachHang WHERE Email = :email AND TrangThai = 1";
+    public function register($data) {
+        $sql = "INSERT INTO {$this->table}
+                (HoTen, Email, MatKhau, DienThoai, DiaChi)
+                VALUES (:HoTen, :Email, :MatKhau, :DienThoai, :DiaChi)";
+
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(":email", $email);
-        $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->execute($data);
+    }
+
+    public function login($email) {
+        $sql = "SELECT * FROM {$this->table} WHERE Email=:Email LIMIT 1";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute(["Email"=>$email]);
+        return $stmt;
     }
 }
-?>

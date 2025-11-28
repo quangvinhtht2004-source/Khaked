@@ -1,26 +1,68 @@
 <?php
-require_once __DIR__ . "/../config/config.php";
-
 class DonHang {
-    private $conn;
 
-    public function __construct() {
-        $db = new Database();
-        $this->conn = $db->getConnection();
+    private $conn;
+    private $table = "DonHang";
+
+    public function __construct($db) {
+        $this->conn = $db;
     }
 
-    public function createOrder($khachHangID, $diaChi, $soDienThoai, $phuongThucTT, $tongTien) {
-        $sql = "INSERT INTO DonHang (KhachHangID, DiaChiGiao, SoDienThoai, PhuongThucTT, TongTien, TrangThai)
-                VALUES (:kh, :dc, :sdt, :pt, :tt, 'Pending')";
+    // Tạo đơn hàng mới
+    public function create($data) {
+        $sql = "INSERT INTO {$this->table}
+                (KhachHangID, DiaChiGiao, SoDienThoai, PhuongThucTT, TrangThai, ThanhToan, TongTien)
+                VALUES (:KhachHangID, :DiaChiGiao, :SoDienThoai, :PhuongThucTT, :TrangThai, :ThanhToan, :TongTien)";
+
         $stmt = $this->conn->prepare($sql);
 
-        $stmt->bindParam(":kh", $khachHangID);
-        $stmt->bindParam(":dc", $diaChi);
-        $stmt->bindParam(":sdt", $soDienThoai);
-        $stmt->bindParam(":pt", $phuongThucTT);
-        $stmt->bindParam(":tt", $tongTien);
+        return $stmt->execute([
+            ":KhachHangID"  => $data["KhachHangID"],
+            ":DiaChiGiao"   => $data["DiaChiGiao"],
+            ":SoDienThoai"  => $data["SoDienThoai"],
+            ":PhuongThucTT" => $data["PhuongThucTT"],
+            ":TrangThai"    => $data["TrangThai"],
+            ":ThanhToan"    => $data["ThanhToan"],
+            ":TongTien"     => $data["TongTien"]
+        ]);
+    }
 
-        return $stmt->execute();
+    // Lấy danh sách đơn theo khách
+    public function getByCustomer($KhachHangID) {
+        $sql = "SELECT * FROM {$this->table} 
+                WHERE KhachHangID = :id 
+                ORDER BY NgayTao DESC";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute(["id" => $KhachHangID]);
+
+        return $stmt;
+    }
+
+    // Lấy toàn bộ đơn (cho admin)
+    public function getAll() {
+        return $this->conn->query("SELECT * FROM {$this->table} ORDER BY NgayTao DESC");
+    }
+
+    // Lấy thông tin 1 đơn
+    public function getById($DonHangID) {
+        $sql = "SELECT * FROM {$this->table} WHERE DonHangID = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute(["id" => $DonHangID]);
+        return $stmt;
+    }
+
+    // Cập nhật trạng thái đơn (Nhân viên xử lý)
+    public function updateStatus($DonHangID, $TrangThai, $ThanhToan = null) {
+        $sql = "UPDATE {$this->table}
+                SET TrangThai = :TrangThai, ThanhToan = IF(:ThanhToan IS NULL, ThanhToan, :ThanhToan)
+                WHERE DonHangID = :id";
+
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([
+            ":TrangThai" => $TrangThai,
+            ":ThanhToan" => $ThanhToan,
+            ":id" => $DonHangID
+        ]);
     }
 }
-?>

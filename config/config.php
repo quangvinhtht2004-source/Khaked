@@ -1,32 +1,23 @@
 <?php
 class Database {
     private $host = "localhost";
-    private $db_name = "quanlybansach";   // Tên database của bạn
-    private $username = "root";           // Username XAMPP/MAMP/WAMP
-    private $password = "";               // Mật khẩu XAMPP mặc định = rỗng
+    private $db = "quanlybansach";
+    private $user = "root";
+    private $pass = "";
+
     public $conn;
 
-    public function getConnection() {
-        $this->conn = null;
-
+    public function connect() {
         try {
             $this->conn = new PDO(
-                "mysql:host=" . $this->host . ";dbname=" . $this->db_name,
-                $this->username,
-                $this->password
+                "mysql:host=$this->host;dbname=$this->db;charset=utf8",
+                $this->user,
+                $this->pass
             );
-
-            // Thiết lập UTF-8 để hỗ trợ tiếng Việt
-            $this->conn->exec("SET NAMES utf8mb4");
-
-            // Bật chế độ thông báo lỗi
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        } catch (PDOException $exception) {
-            echo "Lỗi kết nối: " . $exception->getMessage();
+        } catch (PDOException $e) {
+            die("Lỗi DB: " . $e->getMessage());
         }
-
         return $this->conn;
     }
 }
-?>
