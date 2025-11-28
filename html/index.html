@@ -73,8 +73,47 @@
 
         <section class="container">
             <h2 class="section-title">Sách Nổi Bật</h2>
+
+            <div class="filter-panel" aria-label="Bộ lọc nâng cao">
+                <div class="filter-group">
+                    <label for="filterSearch">Từ khóa</label>
+                    <div class="filter-input-icon">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input id="filterSearch" type="text" placeholder="Nhập tên sách, tác giả...">
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label for="filterCategory">Thể loại</label>
+                    <select id="filterCategory">
+                        <option value="all">Tất cả</option>
+                        <option value="self-help">Kỹ năng sống</option>
+                        <option value="psychology">Tâm lý học</option>
+                        <option value="novel">Văn học</option>
+                        <option value="business">Kinh tế</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filterPrice">Mức giá</label>
+                    <select id="filterPrice">
+                        <option value="all">Tất cả</option>
+                        <option value="lt100">Dưới 100.000đ</option>
+                        <option value="100-150">100.000đ - 150.000đ</option>
+                        <option value="gt150">Trên 150.000đ</option>
+                    </select>
+                </div>
+                <div class="filter-group checkbox">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="filterSale">
+                        <span>Chỉ xem hàng đang giảm giá</span>
+                    </label>
+                </div>
+                <button type="button" id="filterReset" class="btn-reset-filter">
+                    <i class="fa-solid fa-rotate-right"></i> Xóa bộ lọc
+                </button>
+            </div>
+
             <div class="product-grid">
-                <div class="product-card">
+                <div class="product-card" data-title="Đắc Nhân Tâm - Dale Carnegie" data-category="self-help" data-price="79000" data-sale="true">
                     <span class="badge-sale">-20%</span>
                     <a href="chitietsanpham.html">
                         <img src="https://salt.tikicdn.com/cache/750x750/ts/product/38/54/87/e89f2b9465d9f2dcddcb5e7d068473ba.jpg" alt="Đắc Nhân Tâm" class="p-img">
@@ -83,26 +122,31 @@
                         <button class="btn-cart-outline"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</button>
                     </a>
                 </div>
-                <div class="product-card">
+                <div class="product-card" data-title="Tư Duy Nhanh Và Chậm - Daniel Kahneman" data-category="psychology" data-price="149000" data-sale="true">
                     <span class="badge-sale">-15%</span>
                     <img src="https://salt.tikicdn.com/cache/750x750/ts/product/62/3a/ea/9cb66f84175f6634d236304681140f64.jpg" alt="Tư Duy Nhanh Và Chậm" class="p-img">
                     <h3 class="p-name">Tư Duy Nhanh Và Chậm - Daniel Kahneman</h3>
                     <div><span class="p-price">149.000đ</span> <span class="p-old-price">179.000đ</span></div>
                     <button class="btn-cart-outline"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</button>
                 </div>
-                 <div class="product-card">
+                 <div class="product-card" data-title="Giết Con Chim Nhại - Harper Lee" data-category="novel" data-price="99000" data-sale="false">
                     <img src="https://salt.tikicdn.com/cache/750x750/ts/product/8c/16/56/65a11c605c10b10d9534ff554f2e8a23.jpg" alt="Giết Con Chim Nhại" class="p-img">
                     <h3 class="p-name">Giết Con Chim Nhại - Harper Lee</h3>
                     <div><span class="p-price">99.000đ</span></div>
                     <button class="btn-cart-outline"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</button>
                 </div>
-                <div class="product-card">
+                <div class="product-card" data-title="Thiên Tài Bên Trái, Kẻ Điên Bên Phải" data-category="psychology" data-price="89000" data-sale="false">
                     <span class="badge-sale">Hot</span>
                     <img src="https://salt.tikicdn.com/cache/750x750/ts/product/be/13/89/740249bca7ff6b690e54cf72d23b712c.jpg" alt="Thiên Tài Bên Trái Kẻ Điên Bên Phải" class="p-img">
                     <h3 class="p-name">Thiên Tài Bên Trái, Kẻ Điên Bên Phải</h3>
                     <div><span class="p-price">89.000đ</span></div>
                     <button class="btn-cart-outline"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</button>
                 </div>
+            </div>
+
+            <div id="filterEmptyState" class="filter-empty-state" style="display:none;">
+                <i class="fa-regular fa-face-sad-tear"></i>
+                <p>Không tìm thấy sản phẩm phù hợp. Hãy điều chỉnh lại bộ lọc nhé!</p>
             </div>
         </section>
 

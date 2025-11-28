@@ -81,4 +81,98 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Bắt đầu chạy slide tự động
     autoSlideInterval = setInterval(nextSlide, 5000);
+
+    /* ==============================
+       ADVANCED FILTER / SEARCH
+    ============================== */
+    const productCards = document.querySelectorAll(".product-card");
+
+    if (productCards.length > 0) {
+        const searchInput = document.getElementById("filterSearch");
+        const categorySelect = document.getElementById("filterCategory");
+        const priceSelect = document.getElementById("filterPrice");
+        const saleCheckbox = document.getElementById("filterSale");
+        const resetBtn = document.getElementById("filterReset");
+        const emptyState = document.getElementById("filterEmptyState");
+
+        const priceMatchers = {
+            all: () => true,
+            lt100: price => price < 100000,
+            "100-150": price => price >= 100000 && price <= 150000,
+            gt150: price => price > 150000
+        };
+
+        function getCardTitle(card) {
+            const datasetTitle = card.dataset.title;
+            if (datasetTitle) return datasetTitle.toLowerCase();
+            const nameEl = card.querySelector(".p-name");
+            return nameEl ? nameEl.textContent.toLowerCase() : "";
+        }
+
+        function applyFilters() {
+            const searchTerm = searchInput ? searchInput.value.trim().toLowerCase() : "";
+            const categoryValue = categorySelect ? categorySelect.value : "all";
+            const priceValue = priceSelect ? priceSelect.value : "all";
+            const saleOnly = saleCheckbox ? saleCheckbox.checked : false;
+
+            const matchPrice = priceMatchers[priceValue] || priceMatchers.all;
+
+            let visibleCount = 0;
+
+            productCards.forEach(card => {
+                const title = getCardTitle(card);
+                const category = card.dataset.category || "all";
+                const price = parseInt(card.dataset.price || "0", 10);
+                const isSale = card.dataset.sale === "true";
+
+                let visible = true;
+
+                if (searchTerm && !title.includes(searchTerm)) {
+                    visible = false;
+                }
+
+                if (categoryValue !== "all" && category !== categoryValue) {
+                    visible = false;
+                }
+
+                if (!matchPrice(price)) {
+                    visible = false;
+                }
+
+                if (saleOnly && !isSale) {
+                    visible = false;
+                }
+
+                card.style.display = visible ? "block" : "none";
+
+                if (visible) visibleCount += 1;
+            });
+
+            if (emptyState) {
+                emptyState.style.display = visibleCount === 0 ? "flex" : "none";
+            }
+        }
+
+        function attachChangeListener(element, eventName = "change") {
+            if (!element) return;
+            element.addEventListener(eventName, applyFilters);
+        }
+
+        attachChangeListener(searchInput, "input");
+        attachChangeListener(categorySelect);
+        attachChangeListener(priceSelect);
+        attachChangeListener(saleCheckbox);
+
+        if (resetBtn) {
+            resetBtn.addEventListener("click", () => {
+                if (searchInput) searchInput.value = "";
+                if (categorySelect) categorySelect.value = "all";
+                if (priceSelect) priceSelect.value = "all";
+                if (saleCheckbox) saleCheckbox.checked = false;
+                applyFilters();
+            });
+        }
+
+        applyFilters();
+    }
 });
