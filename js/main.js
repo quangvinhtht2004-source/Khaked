@@ -1,4 +1,67 @@
 /* ==============================
+   CẬP NHẬT BADGE GIỎ HÀNG
+============================== */
+function updateCartBadge() {
+    const badge = document.querySelector(".header-actions .badge");
+    if (!badge) return;
+    
+    // Lấy thông tin user từ localStorage
+    const userInfo = localStorage.getItem('userInfo');
+    if (!userInfo) {
+        // Nếu chưa đăng nhập, ẩn badge
+        badge.style.display = "none";
+        return;
+    }
+    
+    try {
+        const user = JSON.parse(userInfo);
+        const userId = user.KhachHangID || user.id;
+        
+        if (!userId) {
+            badge.style.display = "none";
+            return;
+        }
+        
+        // Gọi API để lấy số lượng giỏ hàng
+        let apiURL;
+        if (window.AppConfig) {
+            apiURL = window.AppConfig.getAPIURL('index.php?controller=GioHang&action=get') + `&user=${userId}`;
+        } else {
+            apiURL = `../api/index.php?controller=GioHang&action=get&user=${userId}`;
+        }
+        
+        fetch(apiURL)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.data) {
+                    const cartItems = Array.isArray(data.data) ? data.data : [];
+                    const totalItems = cartItems.reduce((sum, item) => sum + (item.SoLuong || 0), 0);
+                    
+                    if (totalItems === 0) {
+                        // Ẩn badge khi giỏ hàng trống
+                        badge.style.display = "none";
+                    } else {
+                        // Hiển thị badge với số lượng
+                        badge.style.display = "inline-block";
+                        badge.textContent = totalItems;
+                    }
+                } else {
+                    // Nếu không có dữ liệu, ẩn badge
+                    badge.style.display = "none";
+                }
+            })
+            .catch(error => {
+                console.error("Lỗi khi lấy giỏ hàng:", error);
+                // Nếu có lỗi, ẩn badge
+                badge.style.display = "none";
+            });
+    } catch (error) {
+        console.error("Lỗi khi parse user info:", error);
+        badge.style.display = "none";
+    }
+}
+
+/* ==============================
    NÚT BACK TO TOP
 ============================== */
 const backToTopBtn = document.getElementById("backToTopBtn");
@@ -176,4 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         applyFilters();
     }
+    
+    // Cập nhật badge giỏ hàng khi trang load
+    updateCartBadge();
 });

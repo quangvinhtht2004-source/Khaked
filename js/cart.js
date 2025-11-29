@@ -4,6 +4,24 @@
 
 document.addEventListener("DOMContentLoaded", () => {
     
+    // Cập nhật badge giỏ hàng
+    function updateCartBadge() {
+        const badge = document.querySelector(".header-actions .badge");
+        if (!badge) return;
+        
+        const cartItems = document.querySelectorAll(".cart-item");
+        const totalItems = cartItems.length;
+        
+        if (totalItems === 0) {
+            // Ẩn badge khi giỏ hàng trống
+            badge.style.display = "none";
+        } else {
+            // Hiển thị badge với số lượng
+            badge.style.display = "inline-block";
+            badge.textContent = totalItems;
+        }
+    }
+    
     // Cập nhật tổng giỏ hàng
     function updateCartTotal() {
         let subTotal = 0;
@@ -38,6 +56,9 @@ document.addEventListener("DOMContentLoaded", () => {
         // Cập nhật giao diện
         document.getElementById("sub-total").innerText = subTotal.toLocaleString("vi-VN") + "đ";
         document.getElementById("final-total").innerText = finalTotal.toLocaleString("vi-VN") + "đ";
+        
+        // Cập nhật badge
+        updateCartBadge();
         
         // (Tùy chọn) Cập nhật hiển thị dòng phí vận chuyển trên giao diện nếu cần
         // Bạn cần thêm id="shipping-fee" vào thẻ span chứa 30.000đ ở file HTML nếu muốn số này nhảy tự động
@@ -82,4 +103,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Chạy lần đầu để tính đúng số liệu ban đầu
     updateCartTotal();
+    updateCartBadge();
 });
