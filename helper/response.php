@@ -1,16 +1,9 @@
 <?php
-function success($data, $message = "Success") {
-    return json_encode([
-        "status" => "success",
+function jsonResponse($status, $message, $data = null) {
+    echo json_encode([
+        "status" => $status,
         "message" => $message,
         "data" => $data
     ]);
+    exit;
 }
-
-function error($message) {
-    return json_encode([
-        "status" => "error",
-        "message" => $message
-    ]);
-}
-?>

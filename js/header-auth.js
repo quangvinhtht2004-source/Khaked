@@ -1,82 +1,71 @@
-// Cập nhật header dựa trên trạng thái đăng nhập
-document.addEventListener('DOMContentLoaded', function() {
-    const userInfoContainer = document.getElementById('userInfoContainer');
-    const authButtonsContainer = document.getElementById('authButtonsContainer');
-    const userAvatar = document.getElementById('userAvatar');
-    const userName = document.getElementById('userName');
-    const userInfo = document.getElementById('userInfo');
-    const userMenu = document.getElementById('userMenu');
-    const logoutBtn = document.getElementById('logoutBtn');
+document.addEventListener("DOMContentLoaded", function() {
+    // 1. Lấy thông tin user từ localStorage (đã lưu lúc đăng nhập)
+    const userJson = localStorage.getItem("user");
+    
+    // 2. Lấy các phần tử trên DOM
+    const authButtons = document.getElementById("authButtonsContainer"); // Nút Đăng nhập/Đăng ký
+    const userInfo = document.getElementById("userInfoContainer");       // Khu vực hiển thị tên user
+    const userNameDisplay = document.getElementById("userName");         // Chỗ điền tên
+    const userAvatar = document.getElementById("userAvatar");            // Chỗ điền avatar (chữ cái đầu)
+    const logoutBtn = document.getElementById("logoutBtn");              // Nút đăng xuất
 
-    // Kiểm tra đăng nhập
-    function updateHeader() {
-        const user = authManager.getUser();
-        
-        if (user) {
-            // Đã đăng nhập - hiển thị thông tin user
-            if (userInfoContainer) userInfoContainer.style.display = 'block';
-            if (authButtonsContainer) authButtonsContainer.style.display = 'none';
-            
-            // Cập nhật thông tin
-            if (userName) {
-                userName.textContent = user.HoTen || user.Email || 'Người dùng';
-            }
-            
-            if (userAvatar) {
-                // Lấy chữ cái đầu của tên
-                const firstLetter = (user.HoTen || user.Email || 'U').charAt(0).toUpperCase();
-                userAvatar.textContent = firstLetter;
-            }
-        } else {
-            // Chưa đăng nhập - hiển thị nút đăng nhập/đăng ký
-            if (userInfoContainer) userInfoContainer.style.display = 'none';
-            if (authButtonsContainer) authButtonsContainer.style.display = 'flex';
+    if (userJson) {
+        // --- TRƯỜNG HỢP ĐÃ ĐĂNG NHẬP ---
+        const user = JSON.parse(userJson);
+
+        // 1. Ẩn nút đăng nhập/đăng ký
+        if(authButtons) authButtons.style.display = "none";
+
+        // 2. Hiện thông tin user
+        if(userInfo) userInfo.style.display = "flex";
+
+        // 3. Cập nhật tên người dùng
+        if(userNameDisplay) userNameDisplay.textContent = user.HoTen; // 'HoTen' là key từ database trả về
+
+        // 4. Tạo Avatar từ chữ cái đầu của tên
+        if(userAvatar && user.HoTen) {
+            const firstLetter = user.HoTen.charAt(0).toUpperCase();
+            userAvatar.textContent = firstLetter;
         }
+
+    } else {
+        // --- TRƯỜNG HỢP CHƯA ĐĂNG NHẬP (KHÁCH) ---
+        if(authButtons) authButtons.style.display = "flex";
+        if(userInfo) userInfo.style.display = "none";
     }
 
-    // Toggle user menu
-    if (userInfo) {
-        userInfo.addEventListener('click', function(e) {
-            e.stopPropagation();
-            if (userMenu) {
-                userMenu.classList.toggle('active');
-            }
-        });
-    }
-
-    // Đóng menu khi click bên ngoài
-    document.addEventListener('click', function(e) {
-        if (userMenu && !userInfo.contains(e.target) && !userMenu.contains(e.target)) {
-            userMenu.classList.remove('active');
-        }
-    });
-
-    // Xử lý đăng xuất
+    // --- XỬ LÝ ĐĂNG XUẤT ---
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', function(e) {
+        logoutBtn.addEventListener("click", function(e) {
             e.preventDefault();
-            if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
-                authManager.logout();
-            }
+            
+            // Xóa thông tin khỏi localStorage
+            localStorage.removeItem("user");
+
+            // Load lại trang để reset giao diện về trạng thái chưa đăng nhập
+            window.location.reload(); 
+            // Hoặc chuyển về trang đăng nhập: window.location.href = 'dangnhap.html';
         });
     }
 
-    // Cập nhật header khi trang load
-    updateHeader();
+    // --- XỬ LÝ DROPDOWN MENU (Bấm vào tên thì hiện menu con) ---
+    const userInfoClick = document.getElementById("userInfo");
+    const userMenu = document.getElementById("userMenu");
 
-    // Lắng nghe sự kiện storage để cập nhật khi đăng nhập/đăng xuất ở tab khác
-    window.addEventListener('storage', function(e) {
-        if (e.key === 'vkdbookstore_user' || e.key === 'currentUser') {
-            updateHeader();
-        }
-    });
+    if (userInfoClick && userMenu) {
+        userInfoClick.addEventListener("click", function(e) {
+            e.stopPropagation(); // Ngăn chặn sự kiện click lan ra ngoài
+            // Toggle class 'active' hoặc đổi display
+            if (userMenu.style.display === "block") {
+                userMenu.style.display = "none";
+            } else {
+                userMenu.style.display = "block";
+            }
+        });
 
-    // Lắng nghe custom event khi user đăng nhập
-    window.addEventListener('userLoggedIn', function(e) {
-        updateHeader();
-    });
-
-    // Kiểm tra lại sau khi DOM hoàn toàn load xong
-    setTimeout(updateHeader, 100);
+        // Bấm ra ngoài thì đóng menu
+        document.addEventListener("click", function() {
+            userMenu.style.display = "none";
+        });
+    }
 });
-

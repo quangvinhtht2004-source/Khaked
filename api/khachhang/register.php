@@ -1,86 +1,53 @@
 <?php
-// Ngăn cache
-header("Cache-Control: no-cache, no-store, must-revalidate");
-header("Pragma: no-cache");
-header("Expires: 0");
-
-// Cho phép CORS và các method
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Content-Type: application/json");
-
-// Xử lý preflight request
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
-
-// Chỉ cho phép POST
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(["status"=>false, "message"=>"Method not allowed. Use POST."]);
-    exit;
-}
-
-error_reporting(E_ALL);
+// Tắt báo lỗi hiển thị ra màn hình để tránh làm hỏng JSON
+error_reporting(0); 
 ini_set('display_errors', 0);
 
+header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+
 try {
-    include "../../config/config.php";
-    include "../../model/KhachHang.php";
+    // Lấy raw JSON body
+    $input = file_get_contents("php://input");
+    $data = json_decode($input, true);
 
-    $db = (new Database())->connect();
-    $model = new KhachHang($db);
-
-    $data = json_decode(file_get_contents("php://input"), true);
-
-    // valid request
-    if (!$data) {
-        echo json_encode(["status"=>false, "message"=>"Không nhận được dữ liệu JSON"]);
-        exit;
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        throw new Exception("Dữ liệu JSON không hợp lệ");
     }
 
-    if (!isset($data["Email"]) || !isset($data["MatKhau"])) {
-        echo json_encode(["status"=>false, "message"=>"Thiếu Email hoặc Mật khẩu"]);
-        exit;
+    if (empty($data)) {
+        throw new Exception("Không nhận được dữ liệu");
     }
 
-    // Kiểm tra email
-    if ($model->checkEmail($data["Email"])->rowCount() > 0) {
-        echo json_encode(["status"=>false, "message"=>"Email đã tồn tại"]);
-        exit;
+    // Kiểm tra các trường bắt buộc
+    if (empty($data['HoTen']) || empty($data['Email']) || empty($data['MatKhau'])) {
+        throw new Exception("Vui lòng điền đầy đủ thông tin");
     }
 
-    // Kiểm tra số điện thoại nếu có
-    if (isset($data["DienThoai"]) && !empty($data["DienThoai"])) {
-        if ($model->checkPhone($data["DienThoai"])->rowCount() > 0) {
-            echo json_encode(["status"=>false, "message"=>"Số điện thoại đã tồn tại"]);
-            exit;
-        }
+    // Nhúng file (Đảm bảo đường dẫn đúng với cấu trúc thư mục của bạn)
+    // Lưu ý: Dựa vào ảnh bạn gửi, file này nằm trong api/khachhang/
+    // Nên đường dẫn require phải đi ra 2 cấp cha
+    require_once "../../config/Database.php";
+    require_once "../../models/KhachHang.php";
+
+    $database = new Database();
+    $db = $database->connect();
+    
+    if(!$db) {
+        throw new Exception("Lỗi kết nối CSDL");
     }
 
-    // Gói data insert
-    $dataInsert = [
-        "HoTen"     => $data["HoTen"] ?? "",
-        "Email"     => $data["Email"],
-        "MatKhau"   => password_hash($data["MatKhau"], PASSWORD_DEFAULT),
-        "DienThoai" => $data["DienThoai"] ?? "",
-        "DiaChi"    => $data["DiaChi"] ?? ""
-    ];
+    $kh = new KhachHang($db);
+    $result = $kh->register($data);
 
-    if ($model->register($dataInsert)) {
-        echo json_encode(["status"=>true, "message"=>"Đăng ký thành công"]);
-    } else {
-        $errorInfo = $db->errorInfo();
-        $errorMsg = "Lỗi hệ thống";
-        if (isset($errorInfo[2])) {
-            $errorMsg = "Lỗi database: " . $errorInfo[2];
-        }
-        echo json_encode(["status"=>false, "message"=>$errorMsg]);
-    }
-} catch (PDOException $e) {
-    echo json_encode(["status"=>false, "message"=>"Lỗi database: " . $e->getMessage()]);
+    echo json_encode($result);
+
 } catch (Exception $e) {
-    echo json_encode(["status"=>false, "message"=>"Lỗi: " . $e->getMessage()]);
+    echo json_encode([
+        "status" => false,
+        "message" => $e->getMessage()
+    ]);
 }
+?>
