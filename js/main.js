@@ -88,7 +88,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const productCards = document.querySelectorAll(".product-card");
 
     if (productCards.length > 0) {
-        const searchInput = document.getElementById("filterSearch");
+        // Sử dụng search-box input trong header thay vì filterSearch
+        const searchInput = document.querySelector(".search-box input");
         const categorySelect = document.getElementById("filterCategory");
         const priceSelect = document.getElementById("filterPrice");
         const saleCheckbox = document.getElementById("filterSale");

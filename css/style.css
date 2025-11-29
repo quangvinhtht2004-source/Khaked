@@ -154,19 +154,37 @@ img { max-width: 100%; display: block; }
     font-weight: 700; color: var(--gold-color);
     text-align: center; text-transform: uppercase; letter-spacing: 2px;
 }
-.product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 100px; }
+
+/* Layout với filter bên trái và sản phẩm bên phải */
+.products-with-filters {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.filter-sidebar {
+    flex: 0 0 280px; /* Cố định chiều rộng sidebar */
+}
 
 .filter-panel {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 20px;
     background: var(--bg-surface);
     border: 1px solid var(--stroke-color);
     border-radius: 16px;
     padding: 24px;
-    margin-top: 30px;
-    margin-bottom: 30px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 140px; /* Sticky khi scroll */
+}
+
+.product-grid { 
+    flex: 1; /* Chiếm phần còn lại */
+    display: grid; 
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 24px; 
+    margin-bottom: 100px; 
 }
 
 .filter-group label {
@@ -258,7 +276,7 @@ img { max-width: 100%; display: block; }
 }
 
 .filter-empty-state {
-    margin-top: -60px;
+    flex: 1; /* Chiếm phần còn lại của products-with-filters */
     padding: 60px 30px;
     text-align: center;
     color: var(--text-gray);
@@ -267,6 +285,7 @@ img { max-width: 100%; display: block; }
     gap: 15px;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
 
 .filter-empty-state i {
@@ -450,8 +469,15 @@ img { max-width: 100%; display: block; }
 }
 @media (max-width: 992px) {
     .search-box { display: none; }
+    .products-with-filters {
+        flex-direction: column;
+    }
+    .filter-sidebar {
+        flex: 1;
+        width: 100%;
+    }
     .filter-panel {
-        grid-template-columns: repeat(2, 1fr);
+        position: static;
     }
     .product-grid { grid-template-columns: repeat(3, 1fr); }
     .slide-book { width: 260px; right: 40px; }
@@ -467,9 +493,6 @@ img { max-width: 100%; display: block; }
 @media (max-width: 768px) {
     .header-wrapper { padding: 0 20px; }
     .product-grid { grid-template-columns: repeat(2, 1fr); }
-    .filter-panel {
-        grid-template-columns: 1fr;
-    }
     .book-slider { height: 500px; }
     .category-list {
         padding: 10px 20px;

@@ -78,47 +78,6 @@
     </nav>
 
     <main>  
-        <!-- Bộ lọc nâng cao -->
-        <section class="container">
-            <div class="filter-panel" aria-label="Bộ lọc nâng cao">
-                <div class="filter-group">
-                    <label for="filterSearch">Từ khóa</label>
-                    <div class="filter-input-icon">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input id="filterSearch" type="text" placeholder="Nhập tên sách, tác giả...">
-                    </div>
-                </div>
-                <div class="filter-group">
-                    <label for="filterCategory">Thể loại</label>
-                    <select id="filterCategory">
-                        <option value="all">Tất cả</option>
-                        <option value="self-help">Kỹ năng sống</option>
-                        <option value="psychology">Tâm lý học</option>
-                        <option value="novel">Văn học</option>
-                        <option value="business">Kinh tế</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="filterPrice">Mức giá</label>
-                    <select id="filterPrice">
-                        <option value="all">Tất cả</option>
-                        <option value="lt100">Dưới 100.000đ</option>
-                        <option value="100-150">100.000đ - 150.000đ</option>
-                        <option value="gt150">Trên 150.000đ</option>
-                    </select>
-                </div>
-                <div class="filter-group checkbox">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="filterSale">
-                        <span>Chỉ xem hàng đang giảm giá</span>
-                    </label>
-                </div>
-                <button type="button" id="filterReset" class="btn-reset-filter">
-                    <i class="fa-solid fa-rotate-right"></i> Xóa bộ lọc
-                </button>
-            </div>
-        </section>
-
         <h2 class="section-title" style="margin-top:40px; text-align:center;">
             🔥 Sách Hot
         </h2>
@@ -153,7 +112,43 @@
         <section class="container">
             <h2 class="section-title">Sách Nổi Bật</h2>
 
-            <div class="product-grid">
+            <div class="products-with-filters">
+                <!-- Bộ lọc bên trái -->
+                <aside class="filter-sidebar" aria-label="Bộ lọc nâng cao">
+                    <div class="filter-panel">
+                        <div class="filter-group">
+                            <label for="filterCategory">Thể loại</label>
+                            <select id="filterCategory">
+                                <option value="all">Tất cả</option>
+                                <option value="self-help">Kỹ năng sống</option>
+                                <option value="psychology">Tâm lý học</option>
+                                <option value="novel">Văn học</option>
+                                <option value="business">Kinh tế</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filterPrice">Mức giá</label>
+                            <select id="filterPrice">
+                                <option value="all">Tất cả</option>
+                                <option value="lt100">Dưới 100.000đ</option>
+                                <option value="100-150">100.000đ - 150.000đ</option>
+                                <option value="gt150">Trên 150.000đ</option>
+                            </select>
+                        </div>
+                        <div class="filter-group checkbox">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="filterSale">
+                                <span>Chỉ xem hàng đang giảm giá</span>
+                            </label>
+                        </div>
+                        <button type="button" id="filterReset" class="btn-reset-filter">
+                            <i class="fa-solid fa-rotate-right"></i> Xóa bộ lọc
+                        </button>
+                    </div>
+                </aside>
+
+                <!-- Sản phẩm bên phải -->
+                <div class="product-grid">
                 <div class="product-card" data-title="Đắc Nhân Tâm - Dale Carnegie" data-category="self-help" data-price="79000" data-sale="true">
                     <span class="badge-sale">-20%</span>
                     <a href="chitietsanpham.html">
@@ -183,11 +178,12 @@
                     <div><span class="p-price">89.000đ</span></div>
                     <button class="btn-cart-outline"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</button>
                 </div>
-            </div>
+                </div>
 
-            <div id="filterEmptyState" class="filter-empty-state" style="display:none;">
-                <i class="fa-regular fa-face-sad-tear"></i>
-                <p>Không tìm thấy sản phẩm phù hợp. Hãy điều chỉnh lại bộ lọc nhé!</p>
+                <div id="filterEmptyState" class="filter-empty-state" style="display:none;">
+                    <i class="fa-regular fa-face-sad-tear"></i>
+                    <p>Không tìm thấy sản phẩm phù hợp. Hãy điều chỉnh lại bộ lọc nhé!</p>
+                </div>
             </div>
         </section>
 
