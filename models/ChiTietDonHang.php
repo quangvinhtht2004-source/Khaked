@@ -3,19 +3,19 @@ require_once __DIR__ . "/../core/Model.php";
 
 class ChiTietDonHang extends Model {
 
-    public function create($data) {
-        $sql = "INSERT INTO ChiTietDonHang (DonHangID, SachID, SoLuong, DonGia)
-                VALUES (:DonHangID, :SachID, :SoLuong, :DonGia)";
+    public function add($DonHangID, $SachID, $SoLuong, $DonGia) {
+        $sql = "INSERT INTO ChiTietDonHang (DonHangID, SachID, SoLuong, DonGia) 
+                VALUES (?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute($data);
+        return $stmt->execute([$DonHangID, $SachID, $SoLuong, $DonGia]);
     }
 
-    public function getItems($DonHangID) {
-        $stmt = $this->db->prepare("
-            SELECT ct.*, s.TenSach, s.AnhBia 
-            FROM ChiTietDonHang ct
-            JOIN Sach s ON ct.SachID = s.SachID
-            WHERE DonHangID = ?");
+    public function getByDonHang($DonHangID) {
+        $sql = "SELECT ct.*, s.TenSach, s.AnhBia 
+                FROM ChiTietDonHang ct
+                LEFT JOIN Sach s ON ct.SachID = s.SachID
+                WHERE ct.DonHangID = ?";
+        $stmt = $this->db->prepare($sql);
         $stmt->execute([$DonHangID]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

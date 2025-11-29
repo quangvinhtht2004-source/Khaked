@@ -1,7 +1,7 @@
 <?php
-require_once "../../config/Database.php";
-require_once "../../model/Sach.php";
-require_once "../../helper/response.php";
+require_once __DIR__ . "/../../config/Database.php";
+require_once __DIR__ . "/../../models/Sach.php";
+require_once __DIR__ . "/../../helper/response.php";
 
 class SachController {
     private $db;
@@ -13,15 +13,18 @@ class SachController {
     }
 
     public function list() {
-        $list = $this->model->getAll();
+        $list = $this->model->search(""); 
         jsonResponse(true, "Danh sách sách", $list);
     }
 
     public function detail() {
         $id = $_GET["id"] ?? 0;
-        $sach = $this->model->getDetail($id);
-        $sach ? jsonResponse(true, "Chi tiết sách", $sach)
-              : jsonResponse(false, "Không tìm thấy sách");
+        $sach = $this->model->getById($id);
+        if ($sach) {
+            jsonResponse(true, "Chi tiết sách", $sach);
+        } else {
+            jsonResponse(false, "Không tìm thấy sách");
+        }
     }
 
     public function search() {
@@ -29,14 +32,10 @@ class SachController {
         $result = $this->model->search($keyword);
         jsonResponse(true, "Kết quả tìm kiếm", $result);
     }
+    
+    public function newArrivals() {
+        $result = $this->model->getNewArrivals();
+        jsonResponse(true, "Sách mới về", $result);
+    }
 }
-
-$controller = new SachController();
-$action = $_GET["action"] ?? "";
-
-switch ($action) {
-    case "list": $controller->list(); break;
-    case "detail": $controller->detail(); break;
-    case "search": $controller->search(); break;
-    default: jsonResponse(false, "API không hợp lệ");
-}
+?>

@@ -25,36 +25,30 @@
             <h1 class="auth-title">Tạo Tài Khoản</h1>
             <p class="auth-desc">Đăng ký thành viên VKDBookStore.</p>
 
-            <form id="registerForm" action="#">
-                <div class="form-group">
-                    <label class="form-label">Họ và tên</label>
-                    <input type="text" id="fullName" class="form-input" placeholder="Ví dụ: Nguyễn Văn A" required minlength="2">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Email</label>
-                    <input type="email" id="email" class="form-input" placeholder="Nhập email..." required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Số điện thoại</label>
-                    <input type="tel" id="phone" class="form-input" placeholder="Nhập số điện thoại (10-11 số)..." required pattern="[0-9]{10,11}">
-                </div>
-                <div class="form-group" style="position: relative;">
-                    <label class="form-label">Mật khẩu</label>
-                    <input type="password" id="password" class="form-input" placeholder="Tạo mật khẩu (ít nhất 6 ký tự)..." required minlength="6">
-                    <span id="togglePasswordRegister">
-                        <i class="fa-solid fa-eye"></i>
-                    </span>
-                </div>
-                <div class="form-group" style="position: relative;">
-                    <label class="form-label">Xác nhận mật khẩu</label>
-                    <input type="password" id="confirmPassword" class="form-input" placeholder="Nhập lại mật khẩu..." required minlength="6">
-                    <span id="toggleConfirmPassword">
-                        <i class="fa-solid fa-eye"></i>
-                    </span>
-                </div>
+          <form id="registerForm">
+    <div class="form-group">
+        <label class="form-label">Họ và tên</label>
+        <input type="text" id="fullName" class="form-input" placeholder="Ví dụ: Nguyễn Văn A" required minlength="2">
+    </div>
 
-                <button type="submit" class="btn-primary">ĐĂNG KÝ NGAY</button>
-            </form>
+    <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" id="email" class="form-input" placeholder="Nhập email..." required>
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">Số điện thoại</label>
+        <input type="tel" id="phone" class="form-input" placeholder="Nhập số điện thoại..." required pattern="[0-9]{10,11}">
+    </div>
+
+    <div class="form-group" style="position: relative;">
+        <label class="form-label">Mật khẩu</label>
+        <input type="password" id="password" class="form-input" placeholder="Tạo mật khẩu..." required minlength="6">
+        <span id="togglePasswordRegister"><i class="fa-solid fa-eye"></i></span>
+    </div>
+
+    <button type="submit" class="btn-primary">ĐĂNG KÝ NGAY</button>
+</form>
 
             <p class="auth-switch">
                 Bạn đã có tài khoản rồi? <a href="../html/dangnhap.html">Đăng nhập</a>

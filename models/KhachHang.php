@@ -1,88 +1,65 @@
 <?php
-class KhachHang {
+require_once __DIR__ . "/../core/Model.php";
 
-    private $conn;
-    private $table = "KhachHang";
+class KhachHang extends Model {
 
-    public function __construct($db) {
-        $this->conn = $db;
-    }
-
-    // --- HÀM ĐĂNG KÝ ---
     public function register($data) {
         try {
-            // Kiểm tra email trùng
-            $queryCheck = "SELECT KhachHangID FROM " . $this->table . " WHERE Email = :Email LIMIT 1";
-            $stmtCheck = $this->conn->prepare($queryCheck);
-            $stmtCheck->bindParam(":Email", $data["Email"]);
-            $stmtCheck->execute();
-
-            if ($stmtCheck->rowCount() > 0) {
-                return ["status" => false, "message" => "Email đã tồn tại"];
+            // 1. KIỂM TRA TRÙNG EMAIL
+            $stmtCheckEmail = $this->db->prepare("SELECT KhachHangID FROM KhachHang WHERE Email = ?");
+            $stmtCheckEmail->execute([$data['Email']]);
+            if ($stmtCheckEmail->rowCount() > 0) {
+                return ["status" => false, "message" => "Email này đã được sử dụng!"];
             }
 
-            // Hash mật khẩu
-            $hashedPw = password_hash($data["MatKhau"], PASSWORD_BCRYPT);
+            // 2. KIỂM TRA TRÙNG SỐ ĐIỆN THOẠI (Mới thêm)
+            $stmtCheckPhone = $this->db->prepare("SELECT KhachHangID FROM KhachHang WHERE DienThoai = ?");
+            $stmtCheckPhone->execute([$data['DienThoai']]);
+            if ($stmtCheckPhone->rowCount() > 0) {
+                return ["status" => false, "message" => "Số điện thoại này đã được đăng ký!"];
+            }
+
+            // 3. Hash mật khẩu
+            $hashedPw = password_hash($data['MatKhau'], PASSWORD_BCRYPT);
+
+            // 4. Insert dữ liệu (Địa chỉ để rỗng)
+            $sql = "INSERT INTO KhachHang (HoTen, Email, MatKhau, DienThoai, DiaChi) 
+                    VALUES (:HoTen, :Email, :MatKhau, :DienThoai, :DiaChi)";
             
-            // Xử lý số điện thoại
-            $sdt = isset($data["DienThoai"]) ? $data["DienThoai"] : "";
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute([
+                'HoTen'     => $data['HoTen'],
+                'Email'     => $data['Email'],
+                'MatKhau'   => $hashedPw,
+                'DienThoai' => $data['DienThoai'], // Bắt buộc
+                'DiaChi'    => ''                  // Mặc định là rỗng vì không nhập
+            ]);
 
-            $sql = "INSERT INTO $this->table (HoTen, Email, MatKhau, DienThoai)
-                    VALUES (:HoTen, :Email, :MatKhau, :DienThoai)";
-
-            $stmt = $this->conn->prepare($sql);
-
-            $hoTen = htmlspecialchars(strip_tags($data["HoTen"]));
-            $email = htmlspecialchars(strip_tags($data["Email"]));
-            
-            $stmt->bindParam(":HoTen", $hoTen);
-            $stmt->bindParam(":Email", $email);
-            $stmt->bindParam(":MatKhau", $hashedPw);
-            $stmt->bindParam(":DienThoai", $sdt);
-
-            if ($stmt->execute()) {
+            if ($result) {
                 return ["status" => true, "message" => "Đăng ký thành công"];
             }
-
-            return ["status" => false, "message" => "Lỗi server"];
+            return ["status" => false, "message" => "Lỗi hệ thống"];
 
         } catch (PDOException $e) {
             return ["status" => false, "message" => "Lỗi SQL: " . $e->getMessage()];
         }
     }
 
-    // --- HÀM ĐĂNG NHẬP (Phải nằm TRONG dấu ngoặc của class) ---
+    // ... (Giữ nguyên các hàm login, getById khác) ...
     public function login($email, $password) {
-        // 1. Viết câu lệnh SQL lấy thông tin user theo Email
-        $query = "SELECT KhachHangID, HoTen, Email, MatKhau, DienThoai 
-                  FROM " . $this->table . " 
-                  WHERE Email = :Email LIMIT 1";
+        $stmt = $this->db->prepare("SELECT * FROM KhachHang WHERE Email = ? LIMIT 1");
+        $stmt->execute([$email]);
 
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":Email", $email);
-        $stmt->execute();
-
-        // 2. Nếu tìm thấy Email
         if ($stmt->rowCount() > 0) {
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            // 3. Kiểm tra mật khẩu (So khớp hash)
-            if (password_verify($password, $row['MatKhau'])) {
-                // Xóa mật khẩu khỏi mảng trước khi trả về (để bảo mật)
-                unset($row['MatKhau']);
-                
-                return [
-                    "status" => true,
-                    "message" => "Đăng nhập thành công",
-                    "data" => $row 
-                ];
-            } else {
-                return ["status" => false, "message" => "Mật khẩu không đúng"];
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($user['TrangThai'] == 0) return ["status" => false, "message" => "Tài khoản bị khóa"];
+            
+            if (password_verify($password, $user['MatKhau'])) {
+                unset($user['MatKhau']);
+                return ["status" => true, "data" => $user];
             }
         }
-
-        return ["status" => false, "message" => "Email không tồn tại"];
+        return ["status" => false, "message" => "Email hoặc mật khẩu không đúng"];
     }
-
-} // <--- Dấu đóng ngoặc class phải nằm ở đây (Cuối cùng)
+}
 ?>

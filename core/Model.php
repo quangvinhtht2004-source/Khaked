@@ -1,7 +1,10 @@
 <?php
-class Controller {
-    protected function json($data) {
-        echo json_encode($data, JSON_UNESCAPED_UNICODE);
-        exit;
+class Model {
+    protected $db;
+
+    // Model cần nhận biến kết nối CSDL từ bên ngoài truyền vào
+    public function __construct($db) {
+        $this->db = $db;
     }
 }
+?>

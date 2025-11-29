@@ -5,17 +5,19 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     const email = document.getElementById("email").value.trim();
     const phone = document.getElementById("phone").value.trim();
     const password = document.getElementById("password").value.trim();
+    
+    // Không cần lấy address nữa
 
-    // Dữ liệu gửi đi (Lưu ý: key là DienThoai hay SoDienThoai phụ thuộc vào DB của bạn đã sửa ở bước trước)
     const data = {
         HoTen: fullName,
         Email: email,
         DienThoai: phone, 
         MatKhau: password
+        // Không gửi DiaChi
     };
 
     try {
-        const res = await fetch("http://localhost/frontend/api/khachhang/register.php", {
+        const res = await fetch("http://localhost/frontend/api/index.php?controller=KhachHang&action=register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -24,27 +26,16 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         });
 
         const result = await res.json();
-        console.log("Server response:", result);
-
+        
         if (result.status) {
-            // Thông báo ngắn gọn
-            alert("Đăng ký thành công! Đang chuyển hướng...");
-            
-            // --- ĐOẠN CODE CHUYỂN TRANG ---
-            // Bạn hãy thay đổi đường dẫn bên dưới cho đúng với file đăng nhập của bạn
-            // Ví dụ 1: Nếu dùng Controller như file bạn gửi lúc đầu:
-            window.location.href = "dangnhap.html?action=login"; 
-            
-            // Ví dụ 2: Nếu file đăng nhập nằm ngay cùng thư mục:
-            // window.location.href = "login.php";
-            // -------------------------------
-            
+            alert(result.message);
+            window.location.href = "dangnhap.html"; 
         } else {
-            alert(result.message || "Đăng ký thất bại");
+            alert(result.message); // Sẽ hiện: "Số điện thoại này đã được đăng ký!" nếu trùng
         }
 
     } catch (error) {
         console.error(error);
-        alert("Không thể kết nối server");
+        alert("Lỗi kết nối server API");
     }
 });

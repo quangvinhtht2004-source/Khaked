@@ -1,7 +1,7 @@
 <?php
-require_once "../../config/Database.php";
-require_once "../../model/NhanVien.php";
-require_once "../../helper/response.php";
+require_once __DIR__ . "/../../config/Database.php";
+require_once __DIR__ . "/../../models/NhanVien.php";
+require_once __DIR__ . "/../../helper/response.php";
 
 class NhanVienController {
     private $db;
@@ -14,23 +14,21 @@ class NhanVienController {
 
     public function login() {
         $data = json_decode(file_get_contents("php://input"), true);
-
-        if (!$data) jsonResponse(false, "Không có dữ liệu JSON");
+        if (!$data) {
+            jsonResponse(false, "Không có dữ liệu gửi lên");
+            return;
+        }
 
         $email = $data["Email"] ?? "";
         $password = $data["MatKhau"] ?? "";
 
-        $nv = $this->model->login($email);
+        $nv = $this->model->login($email, $password);
 
-        if ($nv && password_verify($password, $nv["MatKhau"])) {
-            unset($nv["MatKhau"]);
+        if ($nv) {
             jsonResponse(true, "Đăng nhập thành công", $nv);
+        } else {
+            jsonResponse(false, "Sai email, mật khẩu hoặc tài khoản bị khóa");
         }
-
-        jsonResponse(false, "Sai thông tin đăng nhập");
     }
 }
-
-$controller = new NhanVienController();
-$action = $_GET["action"] ?? "";
-($action === "login") ? $controller->login() : jsonResponse(false, "API không hợp lệ");
+?>
