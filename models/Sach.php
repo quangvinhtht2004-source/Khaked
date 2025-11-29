@@ -3,34 +3,54 @@ require_once __DIR__ . "/../core/Model.php";
 
 class Sach extends Model {
 
+    // Hàm hỗ trợ tính giá khuyến mãi
+    private function processPrice($book) {
+        if ($book) {
+            $book['GiaGoc'] = $book['Gia']; // Giữ giá gốc để hiển thị gạch ngang
+            
+            // Nếu có % giảm thì tính lại giá bán
+            if (isset($book['PhanTramGiam']) && $book['PhanTramGiam'] > 0) {
+                $book['Gia'] = $book['GiaGoc'] * (100 - $book['PhanTramGiam']) / 100;
+            }
+        }
+        return $book;
+    }
+
     public function getById($id) {
-        // Join thêm Thể loại để lấy tên thể loại
         $sql = "SELECT s.*, tl.TenTheLoai 
                 FROM Sach s 
                 LEFT JOIN TheLoai tl ON s.TheLoaiID = tl.TheLoaiID 
                 WHERE s.SachID = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $book = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $this->processPrice($book);
     }
 
-    // Tìm kiếm sách (chỉ lấy sách đang bán)
     public function search($keyword) {
-        $sql = "SELECT * FROM Sach 
-                WHERE TenSach LIKE ? AND TrangThai = 1";
+        $sql = "SELECT * FROM Sach WHERE TenSach LIKE ? AND TrangThai = 1";
         $stmt = $this->db->prepare($sql);
         $stmt->execute(["%$keyword%"]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Xử lý giá cho từng cuốn sách trong danh sách
+        foreach ($books as &$book) {
+            $book = $this->processPrice($book);
+        }
+        return $books;
     }
     
-    // Lấy tất cả sách mới nhất
     public function getNewArrivals() {
-        return $this->db->query("SELECT * FROM Sach WHERE TrangThai = 1 ORDER BY NgayTao DESC LIMIT 10")->fetchAll(PDO::FETCH_ASSOC);
+        $books = $this->db->query("SELECT * FROM Sach WHERE TrangThai = 1 ORDER BY NgayTao DESC LIMIT 10")->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($books as &$book) {
+            $book = $this->processPrice($book);
+        }
+        return $books;
     }
 
-    // Cập nhật điểm đánh giá (khi có review mới)
+    // Giữ nguyên hàm updateRating...
     public function updateRating($SachID, $SoSao) {
-        // Công thức tính trung bình cộng dồn
         $sql = "UPDATE Sach 
                 SET RatingTB = ((RatingTB * SoDanhGia) + :SoSao) / (SoDanhGia + 1),
                     SoDanhGia = SoDanhGia + 1
@@ -39,3 +59,4 @@ class Sach extends Model {
         return $stmt->execute(['SoSao' => $SoSao, 'SachID' => $SachID]);
     }
 }
+?>

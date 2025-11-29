@@ -4,6 +4,7 @@ require_once __DIR__ . "/../../models/DonHang.php";
 require_once __DIR__ . "/../../models/ChiTietDonHang.php";
 require_once __DIR__ . "/../../models/GioHang.php";
 require_once __DIR__ . "/../../models/GioHangItem.php";
+require_once __DIR__ . "/../../models/KhuyenMai.php"; // Nhớ require
 require_once __DIR__ . "/../../helper/response.php";
 
 class DonHangController {
@@ -12,6 +13,7 @@ class DonHangController {
     private $chiTietModel;
     private $gioHangModel;
     private $itemModel;
+    private $kmModel;
 
     public function __construct() {
         $this->db = (new Database())->connect();
@@ -19,20 +21,21 @@ class DonHangController {
         $this->chiTietModel = new ChiTietDonHang($this->db);
         $this->gioHangModel = new GioHang($this->db);
         $this->itemModel    = new GioHangItem($this->db);
+        $this->kmModel      = new KhuyenMai($this->db);
     }
 
     public function create() {
         $data = json_decode(file_get_contents("php://input"), true);
         
-        // Sửa: Kiểm tra dữ liệu đầu vào chặt chẽ hơn
         if (!isset($data['KhachHangID'])) {
             jsonResponse(false, "Thiếu ID khách hàng");
             return;
         }
         
         $userId = $data['KhachHangID'];
+        $couponCode = $data['CouponCode'] ?? '';
 
-        // 1. Lấy thông tin giỏ hàng
+        // 1. Lấy giỏ hàng (Model GioHangItem đã tự tính GiaBan sau khi trừ % sách)
         $cart = $this->gioHangModel->getOrCreate($userId);
         $items = $this->itemModel->getItems($cart['GioHangID']);
 
@@ -41,32 +44,66 @@ class DonHangController {
             return;
         }
 
-        // 2. Tính tổng tiền
-        $tongTien = 0;
+        // 2. Tính TỔNG TIỀN TẠM TÍNH (Dựa trên giá sách đã giảm)
+        $tamTinh = 0;
         foreach ($items as $item) {
-            $tongTien += $item['Gia'] * $item['SoLuong'];
+            $tamTinh += $item['GiaBan'] * $item['SoLuong'];
         }
 
-        // 3. Tạo đơn hàng
+        // 3. Tính GIẢM GIÁ VOUCHER (Nếu có)
+        $tienGiamVoucher = 0;
+        $kmId = null;
+
+        if (!empty($couponCode)) {
+            $km = $this->kmModel->findByCode($couponCode);
+            
+            if (!$km) {
+                jsonResponse(false, "Mã giảm giá không tồn tại"); return;
+            }
+            if ($km['SoLuong'] <= 0) {
+                jsonResponse(false, "Mã đã hết lượt dùng"); return;
+            }
+            if ($tamTinh < $km['DonToiThieu']) {
+                jsonResponse(false, "Đơn hàng chưa đủ điều kiện (Tối thiểu " . number_format($km['DonToiThieu']) . "đ)"); return;
+            }
+
+            // Tính toán
+            if ($km['LoaiKM'] == 'phantram') {
+                $tienGiamVoucher = $tamTinh * ($km['GiaTri'] / 100);
+            } else {
+                $tienGiamVoucher = $km['GiaTri'];
+            }
+
+            if ($tienGiamVoucher > $tamTinh) $tienGiamVoucher = $tamTinh;
+            $kmId = $km['KhuyenMaiID'];
+        }
+
+        // 4. Chốt Tổng Tiền
+        $tongTien = $tamTinh - $tienGiamVoucher;
+
+        // 5. Lưu Đơn Hàng
         $orderData = [
-            'KhachHangID'  => $userId,
-            'DiaChiGiao'   => $data['DiaChiGiao'] ?? '',
-            'SoDienThoai'  => $data['SoDienThoai'] ?? '',
-            'PhuongThucTT' => $data['PhuongThucTT'] ?? 'COD',
-            'TongTien'     => $tongTien
+            'KhachHangID'     => $userId,
+            'DiaChiGiao'      => $data['DiaChiGiao'] ?? '',
+            'SoDienThoai'     => $data['SoDienThoai'] ?? '',
+            'PhuongThucTT'    => $data['PhuongThucTT'] ?? 'COD',
+            'TongTien'        => $tongTien,
+            'TienGiamVoucher' => $tienGiamVoucher,
+            'KhuyenMaiID'     => $kmId
         ];
         
         $donHangID = $this->donHangModel->create($orderData);
 
         if ($donHangID) {
-            // 4. Copy sang ChiTietDonHang
+            // Trừ số lượng mã
+            if ($kmId) $this->kmModel->decreaseQuantity($kmId);
+
+            // Lưu chi tiết (Quan trọng: Lưu GiaBan thực tế)
             foreach ($items as $item) {
-                $this->chiTietModel->add($donHangID, $item['SachID'], $item['SoLuong'], $item['Gia']);
+                $this->chiTietModel->add($donHangID, $item['SachID'], $item['SoLuong'], $item['GiaBan']);
             }
 
-            // 5. Xóa giỏ hàng
             $this->gioHangModel->clearCart($cart['GioHangID']);
-
             jsonResponse(true, "Đặt hàng thành công", ['DonHangID' => $donHangID]);
         } else {
             jsonResponse(false, "Lỗi tạo đơn hàng");
@@ -80,12 +117,10 @@ class DonHangController {
     }
 
     public function detail() {
-        $donHangID = $_GET['id'] ?? 0;
-        $order = $this->donHangModel->getById($donHangID);
-        
+        $id = $_GET['id'] ?? 0;
+        $order = $this->donHangModel->getById($id);
         if ($order) {
-            $items = $this->chiTietModel->getByDonHang($donHangID);
-            $order['ChiTiet'] = $items;
+            $order['ChiTiet'] = $this->chiTietModel->getByDonHang($id);
             jsonResponse(true, "Chi tiết đơn hàng", $order);
         } else {
             jsonResponse(false, "Không tìm thấy đơn hàng");
